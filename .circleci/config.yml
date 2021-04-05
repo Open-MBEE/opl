@@ -1,0 +1,54 @@
+version: 2.1
+orbs:
+  python: circleci/python@1.3.4
+
+jobs:
+  build:
+    executor:
+      name: python/default
+    working_directory: /home/circleci/opl
+    steps:
+      - checkout
+      - run:
+          name: create packages
+          command: |
+            python setup.py sdist
+            python setup.py bdist_wheel
+      - persist_to_workspace:
+            root: /home/circleci/
+            paths:
+                - opl/*
+
+  deploy:
+      executor: python/default
+      working_directory: /home/circleci/opl
+      steps:
+          - attach_workspace:
+                at: ~/
+          - run:
+              name: init .pypirc
+              command: |
+                echo -e "[pypi]" >> ~/.pypirc
+                echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
+                echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+          - run:
+              name: upload to pypi
+              command: |
+                . venv/bin/activate
+                twine upload dist/*
+
+workflows:
+    version: 2
+    build-deploy:
+      jobs:
+        - build:
+              filters:
+                  tags:
+                      only: /^v[0-9.]+(-(a|b|rc)[0-9]+)?$/
+        - deploy:
+              requires:
+                  - build
+              filters:
+                  branches:
+                      only: /^((release|hotfix|support)/v[0-9.]+(-(a|b|rc)[0-9]+)?|develop)$/
+
