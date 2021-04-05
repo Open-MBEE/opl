@@ -36,6 +36,7 @@ jobs:
               command: |
                 python3 -m venv venv
                 . venv/bin/activate
+                pip install --upgrade twine
                 twine upload dist/*
 
 workflows:
@@ -52,4 +53,6 @@ workflows:
               filters:
                   branches:
                       only: /^((release|hotfix|support)/v[0-9.]+(-(a|b|rc)[0-9]+)?|develop)$/
+              context:
+                - PyPI
 
