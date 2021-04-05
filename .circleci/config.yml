@@ -3,7 +3,7 @@ orbs:
   python: circleci/python@1.3.4
 
 jobs:
-  build_and_test:
+  build:
     executor:
       name: python/default
     working_directory: /home/circleci/opl
@@ -39,15 +39,15 @@ jobs:
 
 workflows:
     version: 2
-    build-test-deploy:
+    build-deploy:
       jobs:
-        - build_and_test:
+        - build:
               filters:
                   tags:
                       only: /[0-9.]+(-(a|b|rc)[0-9]+)?/
         - deploy:
               requires:
-                  - build_and_test
+                  - build
               filters:
                   branches:
                       only: /((release|hotfix|support)/[0-9.]+(-(a|b|rc)[0-9]+)?|develop)/
