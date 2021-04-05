@@ -2,6 +2,10 @@ import os
 import re
 from setuptools import setup, find_packages
 
+def read(sr_file):
+    with open(os.path.join(os.path.dirname(__file__), sr_file)) as dh_file:
+        return dh_file.read()
+
 def find_version(filename):
     _version_re = re.compile(r'__version__ = "(.*)"')
     for line in open(filename):
@@ -15,7 +19,7 @@ packages = find_packages(exclude=("examples*", "test*", "scrap*", "build*"))
 
 setup(
     name='opl',
-    version=opl.__version__,
+    version=version,
     description='Open-MBEE Python Library',
     author='Blake Regalia',
     author_email='blake.d.regalia@jpl.nasa.gov',
@@ -24,7 +28,7 @@ setup(
     include_package_data=True,
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
-    packages=['opl'],
+    packages=packages,
     install_requires=read('requirements.txt').strip().split('\n'),
     extras_require={
         "docs": [
