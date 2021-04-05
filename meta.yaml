@@ -1,0 +1,30 @@
+{% set name = "opl" %}
+{% set version = "1.0.0" %}
+
+package:
+    name: "{{ name|lower }}"
+    version: "{{ version }}"
+
+source:
+    path: ./
+
+build:
+    noarch: python
+    number: 0
+    script: "{{ PYTHON }} -m pip install . --no-deps -vv "
+
+requirements:
+    host:
+        - python
+        - pip
+    run:
+        - python
+        - atlassian-python-api
+
+about:
+    home: http://openmbee.org
+    license: Apache 2.0
+    license_file: LICENSE
+    summary: OpenMBEE Python Library
+    description: TBD
+

@@ -1,0 +1,2 @@
+
+Hash = dict[str, str]
