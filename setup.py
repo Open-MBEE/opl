@@ -7,7 +7,7 @@ def read(sr_file):
         return dh_file.read()
 
 def find_version(filename):
-    _version_re = re.compile(r'__version__ = "(.*)"')
+    _version_re = re.compile(r'__version__ = [\'"](.*?)[\'"]')
     for line in open(filename):
         version_match = _version_re.match(line)
         if version_match:
