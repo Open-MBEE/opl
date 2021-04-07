@@ -1,6 +1,6 @@
 import re
 import rdflib
-from typing import Any
+from typing import Any, List, Dict
 
 from SPARQLWrapper import SPARQLWrapper, JSON, POST, RDFXML, TURTLE
 
@@ -132,7 +132,7 @@ class Sparql:
         # a_results = self._y_store.query()
         return SB_PREFIXES_TURTLE+y_results.convert()
 
-    def fetch(self, query: str) -> list[dict[str, Any]]:
+    def fetch(self, query: str) -> List[Dict[str, Any]]:
         '''
         Submit a SPARQL SELECT query and return the query result rows as a list of dicts
 

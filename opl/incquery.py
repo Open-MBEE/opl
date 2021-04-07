@@ -3,14 +3,14 @@ import uuid
 import html
 import datetime
 from urllib.parse import urlparse
-from typing import Type, Optional, Callable, List, Any, NamedTuple
+from typing import Type, Optional, Callable, List, Dict, Any, NamedTuple
 
 from .types import Hash
 import iqs_client
 
 # type aliases
-Row = dict[str, Any]
-Rewriters = dict[str, Callable[[Any], str]]
+Row = Dict[str, Any]
+Rewriters = Dict[str, Callable[[Any], str]]
 
 
 # connector-specific extensions may add custom ways to convert a dict to an element representation;
@@ -157,7 +157,7 @@ class IncQueryProject:
         return p_latest_compartment
 
 
-    def execute(self, name: str, patterns: Hash, bindings: Row={}, w_url_provider=None) -> list[Row]:
+    def execute(self, name: str, patterns: Hash, bindings: Row={}, w_url_provider=None) -> List[Row]:
         '''
         Execute a query and return the results as a list of dicts
 
@@ -188,7 +188,7 @@ class IncQueryProject:
         ]
 
 
-    def extend_row(self, row: Row, query_field: Type[QueryField]) -> list[Row]:
+    def extend_row(self, row: Row, query_field: Type[QueryField]) -> List[Row]:
         '''
         Extend a row by applying the given query_field
 
@@ -223,7 +223,7 @@ class QueryResultsTable:
     :param rows: The list of rows returned from executing a query
     :param labels: A dict that maps field IDs to text labels
     '''
-    def __init__(self, rows: list[Row], labels: Hash=None, rewriters: Rewriters={}):
+    def __init__(self, rows: List[Row], labels: Hash=None, rewriters: Rewriters={}):
         self._a_rows = rows
         self._h_labels = labels
         self._h_rewriters = rewriters or {}
