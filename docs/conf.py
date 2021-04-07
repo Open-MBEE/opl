@@ -46,6 +46,7 @@ version = release
 extensions = [
     # 'sphinxcontrib.apidoc',
     'sphinx.ext.autodoc',
+    'sphinx_autodoc_typehints',
 ]
 
 apidoc_module_dir = '../opl'

@@ -8,5 +8,8 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
-   :special-members: patterns
+
+.. autoclass:: opl.confluence._Page
+   :members:
+   :undoc-members:
 

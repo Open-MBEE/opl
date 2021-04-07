@@ -74,11 +74,11 @@ class IncQueryProject:
     :param password: Password to authenticate with
     :param org: MMS org of the project to select
     :param project: MMS project ID of the project to select
-    :param ref: Which ref to select from the project; defaults to master. Loads the latest commit from that ref
+    :param ref: Which ref to select from the project; defaults to 'master'. Loads the latest commit from that ref
     :param compartment: Instead of specifying org, project/ref, use the specified compartment IRI
     :param patterns: Default patterns to use for implicit query executions
     '''
-    def __init__(self, server, username: str, password: str, org: str=None, project: str=None, ref: str='master', compartment: str=None, patterns: Hash={}):
+    def __init__(self, server: str, username: str, password: str, org: str=None, project: str=None, ref: str=None, compartment: str=None, patterns: Hash={}):
 
         # save patterns dict
         self._h_patterns = patterns
@@ -126,9 +126,11 @@ class IncQueryProject:
         })
 
     # determines the latest available commit for a given org/project/ref
-    def _latest_commit(self, si_org: str, si_project: str, s_ref: str='master'):
+    def _latest_commit(self, si_org: str, si_project: str, s_ref: str=None):
+        if s_ref is None: s_ref = 'master'
+
         # prepare compartment URI prefix
-        s_prefix = 'mms-index:/orgs/{si_org}/projects/{si_project}/refs/{s_ref}/commits/'
+        s_prefix = f'mms-index:/orgs/{si_org}/projects/{si_project}/refs/{s_ref}/commits/'
 
         # prep latest fields
         d_latest_commit = None
@@ -186,7 +188,7 @@ class IncQueryProject:
         ]
 
 
-    def extend_row(self, row: Row, query_field: Type[QueryField]):
+    def extend_row(self, row: Row, query_field: Type[QueryField]) -> list[Row]:
         '''
         Extend a row by applying the given query_field
 
@@ -241,6 +243,8 @@ class QueryResultsTable:
     def to_html(self, rewriters: Rewriters={}) -> str:
         '''
         Construct an HTML table to render the table
+
+        :param rewriters: dict of callback functions for rewriting cell values under the given columns
         '''
         rewriters = rewriters or {}
         h_rewriters = {**self._h_rewriters, **rewriters}
@@ -296,6 +300,10 @@ class QueryResultsTable:
     def to_confluence_xhtml(self, span_id: str, macro_id: str=None, rewriters: Rewriters={}):
         '''
         Construct an XHTML table to render the table in Confluence
+
+        :param span_id: the ID to give the annotated span
+        :param macro_id: optional UUIDv4 to give the Confluence macro
+        :param rewriters: dict of callback functions for rewriting cell values under the given columns
         '''
         return '''
             <ac:structured-macro ac:name="span" ac:schema-version="1" ac:macro-id="{macro_id}">
@@ -312,7 +320,7 @@ class QueryResultsTable:
                 </ac:rich-text-body>
             </ac:structured-macro>
         '''.format(
-            macro_id=macro_id or uuid.uuid4(),
+            macro_id=macro_id or str(uuid.uuid4()),
             span_id=span_id,
             content=self.to_html(rewriters),
         )

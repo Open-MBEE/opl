@@ -34,6 +34,7 @@ setup(
         'docs': [
             'sphinx < 4',
             'sphinxcontrib-apidoc',
+            'sphinx_autodoc_typehints',
         ],
     },
     license='Apache 2.0',
