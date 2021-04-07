@@ -59,7 +59,7 @@ class QueryField(NamedTuple):
     '''
     join: Callable[[Hash], Hash]
     query: str
-    select: Callable[Hash, str]
+    select: Callable[[Hash], str]
     bindings: Hash={}
 
 
