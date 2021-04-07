@@ -34,6 +34,7 @@ def find_version(filename):
             return version_match.group(1)
 
 release = find_version('../opl/__init__.py')
+version = release
 # version = re.sub(r'[0-9]+\.[0-9]\..*', '\1', release)
 
 
@@ -43,7 +44,7 @@ release = find_version('../opl/__init__.py')
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinxcontrib.apidoc',
+    # 'sphinxcontrib.apidoc',
     'sphinx.ext.autodoc',
 ]
 

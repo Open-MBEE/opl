@@ -1,4 +1,7 @@
 
+'''
+A dictionary of VQL pattern groups provided for basic query functionality
+'''
 patterns = {
     'basic': {
         # fetch the literal string value of an owned attribute

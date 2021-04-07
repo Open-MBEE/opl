@@ -12,9 +12,6 @@ Welcome to opl - OpenMBEE Python Library's documentation!
 
    apidocs/modules
 
-.. autoclass:: opl.IncQueryProject
-   :members
-
 
 Indices and tables
 ==================
