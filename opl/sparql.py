@@ -25,6 +25,18 @@ def _directive(s_keyword: str, z_arg='', b_capture_indent=False):
 
 
 class Sparql:
+    '''
+    Wrapper class to simplify submitting and fetching SPARQL queries
+
+    :param endpoint: full URL to the SPARQL endpoint
+    '''
+    def __init__(self, endpoint: str):
+        '''
+        :param endpoint: full URI (with port and path) to SPARQL endpoint
+        '''
+        self._p_endpoint = endpoint
+        self._y_store = SPARQLWrapper(self._p_endpoint)
+
     @staticmethod
     def load(template: str, variables: Hash={}, injections: Hash={}) -> str:
         '''
@@ -90,13 +102,6 @@ class Sparql:
 
         # return output query string
         return sx_template.strip()
-
-    def __init__(self, endpoint: str):
-        '''
-        :param endpoint: full URI (with port and path) to SPARQL endpoint
-        '''
-        self._p_endpoint = endpoint
-        self._y_store = SPARQLWrapper(self._p_endpoint)
 
     def _set_query(self, s_query):
         self._y_store.setQuery(S_PREFIXES_SPARQL+'\n'+s_query)

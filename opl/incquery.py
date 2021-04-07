@@ -64,21 +64,21 @@ class QueryField(NamedTuple):
 
 
 class IncQueryProject:
-    def __init__(self, server, username: str, password: str, org: str=None, project: str=None, ref: str='master', compartment: str=None, patterns: Hash={}):
-        '''
-        Create a new client to query a specific IncQuery project. May either
-        provide an org, project ID and ref to automatically select the latest
-        commit or the full compartment IRI.
+    '''
+    Create a new client to query a specific IncQuery project. May either
+    provide the full compartment IRI or an org, project ID and ref to
+    automatically select the latest commit.
 
-        :param server: URI of the IncQuery server
-        :param username: Username to authenticate with
-        :param password: Password to authenticate with
-        :param org: MMS org of the project to select
-        :param project: MMS project ID of the project to select
-        :param ref: Which ref to select from the project; defaults to master. Loads the latest commit from that ref
-        :param compartment: Instead of specifying org, project/ref, use the specified compartment IRI
-        :param patterns: Default patterns to use for implicit query executions
-        '''
+    :param server: URI of the IncQuery server
+    :param username: Username to authenticate with
+    :param password: Password to authenticate with
+    :param org: MMS org of the project to select
+    :param project: MMS project ID of the project to select
+    :param ref: Which ref to select from the project; defaults to master. Loads the latest commit from that ref
+    :param compartment: Instead of specifying org, project/ref, use the specified compartment IRI
+    :param patterns: Default patterns to use for implicit query executions
+    '''
+    def __init__(self, server, username: str, password: str, org: str=None, project: str=None, ref: str='master', compartment: str=None, patterns: Hash={}):
 
         # save patterns dict
         self._h_patterns = patterns
@@ -215,13 +215,13 @@ class IncQueryProject:
 
 
 class QueryResultsTable:
-    def __init__(self, rows: list[Row], labels: Hash=None, rewriters: Rewriters={}):
-        '''
-        Create the means to render the query results as a table
+    '''
+    Create the means to render the query results as a table
 
-        :param rows: The list of rows returned from executing a query
-        :param labels: A dict that maps field IDs to text labels
-        '''
+    :param rows: The list of rows returned from executing a query
+    :param labels: A dict that maps field IDs to text labels
+    '''
+    def __init__(self, rows: list[Row], labels: Hash=None, rewriters: Rewriters={}):
         self._a_rows = rows
         self._h_labels = labels
         self._h_rewriters = rewriters or {}

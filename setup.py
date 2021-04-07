@@ -13,9 +13,9 @@ def find_version(filename):
         if version_match:
             return version_match.group(1)
 
-version = find_version("opl/__init__.py")
+version = find_version('opl/__init__.py')
 
-packages = find_packages(exclude=("examples*", "test*", "scrap*", "build*"))
+packages = find_packages(exclude=('examples*', 'test*', 'scrap*', 'build*'))
 
 setup(
     name='opl',
@@ -31,9 +31,9 @@ setup(
     packages=packages,
     install_requires=read('requirements.txt').strip().split('\n'),
     extras_require={
-        "docs": [
-            "sphinx",
-            "sphinxcontrib-apidoc",
+        'docs': [
+            'sphinx < 4',
+            'sphinxcontrib-apidoc',
         ],
     },
     license='Apache 2.0',
