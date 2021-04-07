@@ -1,2 +1,3 @@
+from typing import Dict
 
-Hash = dict[str, str]
+Hash = Dict[str, str]

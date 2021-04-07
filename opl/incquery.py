@@ -3,14 +3,14 @@ import uuid
 import html
 import datetime
 from urllib.parse import urlparse
-from typing import Type, Optional, Callable, List, Any, NamedTuple
+from typing import Type, Optional, Callable, List, Dict, Any, NamedTuple
 
 from .types import Hash
 import iqs_client
 
 # type aliases
-Row = dict[str, Any]
-Rewriters = dict[str, Callable[[Any], str]]
+Row = Dict[str, Any]
+Rewriters = Dict[str, Callable[[Any], str]]
 
 
 # connector-specific extensions may add custom ways to convert a dict to an element representation;
@@ -59,26 +59,26 @@ class QueryField(NamedTuple):
     '''
     join: Callable[[Hash], Hash]
     query: str
-    select: Callable[Hash, str]
+    select: Callable[[Hash], str]
     bindings: Hash={}
 
 
 class IncQueryProject:
-    def __init__(self, server, username: str, password: str, org: str=None, project: str=None, ref: str='master', compartment: str=None, patterns: Hash={}):
-        '''
-        Create a new client to query a specific IncQuery project. May either
-        provide an org, project ID and ref to automatically select the latest
-        commit or the full compartment IRI.
+    '''
+    Create a new client to query a specific IncQuery project. May either
+    provide the full compartment IRI or an org, project ID and ref to
+    automatically select the latest commit.
 
-        :param server: URI of the IncQuery server
-        :param username: Username to authenticate with
-        :param password: Password to authenticate with
-        :param org: MMS org of the project to select
-        :param project: MMS project ID of the project to select
-        :param ref: Which ref to select from the project; defaults to master. Loads the latest commit from that ref
-        :param compartment: Instead of specifying org, project/ref, use the specified compartment IRI
-        :param patterns: Default patterns to use for implicit query executions
-        '''
+    :param server: URI of the IncQuery server
+    :param username: Username to authenticate with
+    :param password: Password to authenticate with
+    :param org: MMS org of the project to select
+    :param project: MMS project ID of the project to select
+    :param ref: Which ref to select from the project; defaults to 'master'. Loads the latest commit from that ref
+    :param compartment: Instead of specifying org, project/ref, use the specified compartment IRI
+    :param patterns: Default patterns to use for implicit query executions
+    '''
+    def __init__(self, server: str, username: str, password: str, org: str=None, project: str=None, ref: str=None, compartment: str=None, patterns: Hash={}):
 
         # save patterns dict
         self._h_patterns = patterns
@@ -126,9 +126,11 @@ class IncQueryProject:
         })
 
     # determines the latest available commit for a given org/project/ref
-    def _latest_commit(self, si_org: str, si_project: str, s_ref: str='master'):
+    def _latest_commit(self, si_org: str, si_project: str, s_ref: str=None):
+        if s_ref is None: s_ref = 'master'
+
         # prepare compartment URI prefix
-        s_prefix = 'mms-index:/orgs/{si_org}/projects/{si_project}/refs/{s_ref}/commits/'
+        s_prefix = f'mms-index:/orgs/{si_org}/projects/{si_project}/refs/{s_ref}/commits/'
 
         # prep latest fields
         d_latest_commit = None
@@ -155,7 +157,7 @@ class IncQueryProject:
         return p_latest_compartment
 
 
-    def execute(self, name: str, patterns: Hash, bindings: Row={}, w_url_provider=None) -> list[Row]:
+    def execute(self, name: str, patterns: Hash, bindings: Row={}, w_url_provider=None) -> List[Row]:
         '''
         Execute a query and return the results as a list of dicts
 
@@ -186,7 +188,7 @@ class IncQueryProject:
         ]
 
 
-    def extend_row(self, row: Row, query_field: Type[QueryField]):
+    def extend_row(self, row: Row, query_field: Type[QueryField]) -> List[Row]:
         '''
         Extend a row by applying the given query_field
 
@@ -215,13 +217,13 @@ class IncQueryProject:
 
 
 class QueryResultsTable:
-    def __init__(self, rows: list[Row], labels: Hash=None, rewriters: Rewriters={}):
-        '''
-        Create the means to render the query results as a table
+    '''
+    Create the means to render the query results as a table
 
-        :param rows: The list of rows returned from executing a query
-        :param labels: A dict that maps field IDs to text labels
-        '''
+    :param rows: The list of rows returned from executing a query
+    :param labels: A dict that maps field IDs to text labels
+    '''
+    def __init__(self, rows: List[Row], labels: Hash=None, rewriters: Rewriters={}):
         self._a_rows = rows
         self._h_labels = labels
         self._h_rewriters = rewriters or {}
@@ -241,6 +243,8 @@ class QueryResultsTable:
     def to_html(self, rewriters: Rewriters={}) -> str:
         '''
         Construct an HTML table to render the table
+
+        :param rewriters: dict of callback functions for rewriting cell values under the given columns
         '''
         rewriters = rewriters or {}
         h_rewriters = {**self._h_rewriters, **rewriters}
@@ -296,6 +300,10 @@ class QueryResultsTable:
     def to_confluence_xhtml(self, span_id: str, macro_id: str=None, rewriters: Rewriters={}):
         '''
         Construct an XHTML table to render the table in Confluence
+
+        :param span_id: the ID to give the annotated span
+        :param macro_id: optional UUIDv4 to give the Confluence macro
+        :param rewriters: dict of callback functions for rewriting cell values under the given columns
         '''
         return '''
             <ac:structured-macro ac:name="span" ac:schema-version="1" ac:macro-id="{macro_id}">
@@ -312,7 +320,7 @@ class QueryResultsTable:
                 </ac:rich-text-body>
             </ac:structured-macro>
         '''.format(
-            macro_id=macro_id or uuid.uuid4(),
+            macro_id=macro_id or str(uuid.uuid4()),
             span_id=span_id,
             content=self.to_html(rewriters),
         )

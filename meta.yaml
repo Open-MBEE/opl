@@ -1,5 +1,6 @@
-{% set name = "opl" %}
-{% set version = "1.0.0" %}
+{% set data = load_setup_py_data() %}
+{% set name = data.get('name') %}
+{% set version = data.get('version') %}
 
 package:
     name: "{{ name|lower }}"
@@ -19,7 +20,11 @@ requirements:
         - pip
     run:
         - python
-        - atlassian-python-api
+        - atlassian-python-api ~= 3.8.0
+        - incqueryserver-api-python-client ~= 0.19.0.dev2
+        - SPARQLWrapper ~= 1.8.5
+        - lxml ~= 4.6.2
+        - rdflib ~= 5.0.0
 
 about:
     home: http://openmbee.org
@@ -27,4 +32,3 @@ about:
     license_file: LICENSE
     summary: OpenMBEE Python Library
     description: TBD
-
