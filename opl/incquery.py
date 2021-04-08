@@ -15,7 +15,7 @@ Rewriters = Dict[str, Callable[[Any], str]]
 
 # connector-specific extensions may add custom ways to convert a dict to an element representation;
 #     parse a dict and return the constructed element or None if not the right format
-#     default is ElementInCompartmentDescriptor 
+#     default is ElementInCompartmentDescriptor
 d_element_dict_recognizers : List[Callable[[dict], Optional[Any]]] = []
 
 # borrowed from https://github.com/IncQueryLabs/incquery-server-jupyter/blob/5c869a3436f94b370e80e2431e5187974317e5b9/source/incqueryserver-jupyter/iqs_jupyter/helpers.py#L34-L45
@@ -80,6 +80,24 @@ class IncQueryProject:
     '''
     def __init__(self, server: str, username: str, password: str, org: str=None, project: str=None, ref: str=None, compartment: str=None, patterns: Hash={}):
 
+        # parse server iri
+        du_iqs = urlparse(server)
+
+        # instantiate iqs_client API client
+        self._y_incquery = iqs_client.ApiClient(iqs_client.Configuration(
+            host=du_iqs.scheme + '://' + du_iqs.netloc + '/api',
+            username=username,
+            password=password,
+        ))
+
+        # instantiate API groups
+        self._y_incquery_queries = iqs_client.QueriesApi(self._y_incquery)
+        self._y_incquery_query_execution = iqs_client.QueryExecutionApi(self._y_incquery)
+        self._y_incquery_in_memory = iqs_client.InMemoryIndexApi(self._y_incquery)
+        self._y_incquery_persistent = iqs_client.PersistentIndexApi(self._y_incquery)
+        self._y_incquery_mms_repo = iqs_client.MmsRepositoryApi(self._y_incquery)
+        self._y_incquery_demo = iqs_client.DemoApi(self._y_incquery)
+
         # save patterns dict
         self._h_patterns = patterns
 
@@ -101,24 +119,6 @@ class IncQueryProject:
         # neither specified
         else:
             raise Exception('must specify either a project or compartment')
-
-        # parse server iri
-        du_iqs = urlparse(server)
-
-        # instantiate iqs_client API client
-        self._y_incquery = iqs_client.ApiClient(iqs_client.Configuration(
-            host=du_iqs.scheme+'://'+du_iqs.netloc+'/api',
-            username=username,
-            password=password,
-        ))
-
-        # instantiate API groups
-        self._y_incquery_queries = iqs_client.QueriesApi(self._y_incquery)
-        self._y_incquery_query_execution = iqs_client.QueryExecutionApi(self._y_incquery)
-        self._y_incquery_in_memory = iqs_client.InMemoryIndexApi(self._y_incquery)
-        self._y_incquery_persistent = iqs_client.PersistentIndexApi(self._y_incquery)
-        self._y_incquery_mms_repo = iqs_client.MmsRepositoryApi(self._y_incquery)
-        self._y_incquery_demo = iqs_client.DemoApi(self._y_incquery)
 
         # ensure the selected compartment is loaded into in-memory index
         self._y_incquery_in_memory.load_model_compartment({
@@ -143,7 +143,7 @@ class IncQueryProject:
             # compartment URI matches prefix target
             if p_persistent_compartment.startswith(s_prefix):
                 # fetch compartment details
-                g_details_compartment = self._y_mms_repo.get_repository_compartment_details(p_persistent_compartment)
+                g_details_compartment = self._y_incquery_mms_repo.get_repository_compartment_details(g_persistent_compartment)
 
                 # parse compartment datetime
                 d_commit = datetime.datetime.strptime(g_details_compartment.commit_name, '%Y-%m-%d %H:%M:%S')
@@ -166,7 +166,7 @@ class IncQueryProject:
         :param patterns: A dict of patterns to include during query execution (overwrites defaults provided to constructor)
         '''
         si_query = name
-        h_patterns = self._h_patterns.update(patterns)
+        h_patterns = {**self._h_patterns, **patterns}
         h_bindings = bindings
 
         # execute query
@@ -201,7 +201,7 @@ class IncQueryProject:
         # ref bindings dict
         h_bindings = k_field.bindings
 
-        # upsert with bindings from applying field join 
+        # upsert with bindings from applying field join
         h_bindings.update(k_field.join(g_row))
 
         # execute query
