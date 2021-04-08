@@ -51,8 +51,8 @@ workflows:
               requires:
                   - build
               filters:
-                  branches:
-                      only: /^((release|hotfix|support)/v[0-9.]+(-(a|b|rc)[0-9]+)?|develop)$/
+                  tags:
+                      only: /^v[0-9.]+(-(a|b|rc)[0-9]+)?$/
               context:
                 - PyPI
 
