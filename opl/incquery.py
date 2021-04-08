@@ -166,7 +166,7 @@ class IncQueryProject:
         :param patterns: A dict of patterns to include during query execution (overwrites defaults provided to constructor)
         '''
         si_query = name
-        self._h_patterns.update(patterns)
+        h_patterns = {**self._h_patterns, **patterns}
         h_bindings = bindings
 
         # execute query
@@ -176,7 +176,7 @@ class IncQueryProject:
             },
             'queryLanguage': 'viatra',
             'queryName': si_query,
-            'queryDefinitions': _dict_to_query_defs(self._h_patterns),
+            'queryDefinitions': _dict_to_query_defs(h_patterns),
             'parameterBinding': _dict_to_bindings(h_bindings) if len(h_bindings) != 0 else None
         })
 
