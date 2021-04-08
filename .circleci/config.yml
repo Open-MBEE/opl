@@ -45,12 +45,16 @@ workflows:
       jobs:
         - build:
               filters:
+                  branches:
+                      only: /^((release|hotfix|support)/v[0-9.]+(-(a|b|rc)[0-9]+)?|develop|main|master)$/
                   tags:
                       only: /^v[0-9.]+(-(a|b|rc)[0-9]+)?$/
         - deploy:
               requires:
                   - build
               filters:
+                  branches:
+                      ignore: /.*/
                   tags:
                       only: /^v[0-9.]+(-(a|b|rc)[0-9]+)?$/
               context:
