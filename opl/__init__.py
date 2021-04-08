@@ -5,7 +5,7 @@ from opl.sparql import Sparql
 from opl.constants import prefixes
 from opl.patterns import patterns
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 __all__ = [
     'Confluence',
