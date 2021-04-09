@@ -157,7 +157,7 @@ class IncQueryProject:
         return p_latest_compartment
 
 
-    def execute(self, name: str, patterns: Hash, bindings: Row={}, w_url_provider=None) -> List[Row]:
+    def execute(self, name: str, patterns: Hash={}, bindings: Row={}, w_url_provider=None) -> List[Row]:
         '''
         Execute a query and return the results as a list of dicts
 
