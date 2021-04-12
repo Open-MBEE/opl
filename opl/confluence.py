@@ -1,6 +1,4 @@
 import atlassian
-from typing import Type
-
 
 class _Page:
     '''
@@ -54,7 +52,7 @@ class Confluence:
             password=password,
         )
 
-    def page(self, page_id: str) -> Type[_Page]:
+    def page(self, page_id: str) -> _Page:
         '''
         Create a handle for a specific page
 

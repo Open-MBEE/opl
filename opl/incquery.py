@@ -3,7 +3,7 @@ import uuid
 import html
 import datetime
 from urllib.parse import urlparse
-from typing import Type, Optional, Callable, List, Dict, Any, NamedTuple
+from typing import Optional, Callable, List, Dict, Any, NamedTuple
 
 from .types import Hash
 import iqs_client
@@ -192,7 +192,7 @@ class IncQueryProject:
         ]
 
 
-    def extend_row(self, row: Row, query_field: Type[QueryField]) -> List[Row]:
+    def extend_row(self, row: Row, query_field: QueryField) -> List[Row]:
         '''
         Extend a row by applying the given query_field
 
