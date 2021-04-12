@@ -37,10 +37,12 @@ def _dict_to_element(z_dict_or_attribute_value, f_url_provider=None):
 def _dict_to_query_defs(h_queries: Hash):
     a_defs = []
     for s_name, s_query in h_queries.items():
-        m_name = re.match(r'\s*pattern\s+([^\s\(]+)\s*\(', s_query)
+        m_name = re.match(r'\s*(?:private\s+)?(?:search\s+|incremental\s+)?pattern\s+([^\s\(]+)\s*\(', s_query)
         s_prepend = ''
         if m_name is None:
             s_prepend = f'pattern {s_name}'
+        elif s_name != m_name.group(1):
+            raise Exception(f'pattern definition for "{s_name}" must have identical pattern name, instead found "{m_name.group(1)}"')
         a_defs.append(s_prepend+s_query)
 
     return a_defs
@@ -166,7 +168,9 @@ class IncQueryProject:
         :param patterns: A dict of patterns to include during query execution (overwrites defaults provided to constructor)
         '''
         si_query = name
-        h_patterns = {**self._h_patterns, **patterns}
+        h_patterns = {**self._h_patterns}
+        if patterns is not None:
+            h_patterns.update(patterns)
         h_bindings = bindings
 
         # execute query
@@ -280,7 +284,7 @@ class QueryResultsTable:
 
                 # column has rewriter
                 if si_col in h_rewriters:
-                    s_cell += h_rewriters[si_col](z_value)
+                    s_cell += h_rewriters[si_col](z_value, g_row)
                 # value is a list
                 elif isinstance(z_value, list):
                     s_cell += '<ul>'
