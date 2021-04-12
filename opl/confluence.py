@@ -1,6 +1,4 @@
 import atlassian
-from typing import Type
-
 
 class _Page:
     '''
@@ -27,7 +25,7 @@ class _Page:
         '''
         # page title not set; download it
         if self._s_title is None:
-            self._s_title = self._y_wiki.get_page_by_id(si_page)['title']
+            self._s_title = self._k_wiki.get_page_by_id(self._si_page)['title']
 
         # update page content
         return self._y_confluence.update_page(
@@ -54,7 +52,7 @@ class Confluence:
             password=password,
         )
 
-    def page(self, page_id: str) -> Type[_Page]:
+    def page(self, page_id: str) -> _Page:
         '''
         Create a handle for a specific page
 
