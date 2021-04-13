@@ -5,17 +5,25 @@ class _Page:
     Created by using the `.page()` method on a `Confluence` instance
     '''
     _s_title = None
+    _g_version = None
 
     def __init__(self, k_wiki, si_page: str):
         self._k_wiki = k_wiki
         self._y_confluence = k_wiki._y_confluence
         self._si_page = si_page
 
+    @property
+    def version(self):
+        if self._g_version is None:
+            self.get_content()
+        return self._g_version
+
     def get_content(self) -> str:
         '''
         Retrieve the XHTML content of the page
         '''
-        _g_page = self._y_confluence.get_page_by_id(self._si_page, expand=('body.storage'))
+        _g_page = self._y_confluence.get_page_by_id(self._si_page, expand='body.storage,version')
+        self._g_version = _g_page['version']
         self._s_title = _g_page['title']
         return _g_page['body']['storage']['value']
 
