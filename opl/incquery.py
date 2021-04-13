@@ -63,6 +63,7 @@ class QueryField(NamedTuple):
     query: str
     select: Callable[[Hash], str]
     bindings: Hash={}
+    patterns: Hash={}
 
 
 class IncQueryProject:
