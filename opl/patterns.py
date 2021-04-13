@@ -25,7 +25,7 @@ patterns = {
             }
         ''',
 
-        # returns all artifacts relationships
+        # returns all artifact relationships
         'predicateTarget': '''
             (element : Class, target : Class, predicate : Property, predicateName : String, elementName : String, targetName : String) {
                 Class.name(element, elementName);
