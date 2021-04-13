@@ -34,17 +34,6 @@ patterns = {
                 Property.type(predicate, target);              
                 Class.name(target, targetName);
             }
-        ''',
-
-        # get all literal string property values of an artifact
-        'propertyValue': '''
-            (artifact: Class, artifactName: String, property : Property, propertyName: String, value: String) {
-                Class.name(artifact, artifactName);             
-                Class.ownedAttribute(artifact, property);
-                Property.name(property, propertyName);
-                Property.defaultValue(property, propValue);    
-                LiteralString.value(propValue, value);
-            }
         '''
     }
 }
