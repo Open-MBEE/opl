@@ -24,5 +24,27 @@ patterns = {
                 LiteralString.value(expr, value);
             }
         ''',
+
+        # returns all artifacts relationships
+        'predicateTarget': '''
+            (element : Class, target : Class, predicate : Property, predicateName : String, elementName : String, targetName : String) {
+                Class.name(element, elementName);
+                Class.ownedAttribute(element, predicate);
+                Property.name(predicate, predicateName);
+                Property.type(predicate, target);              
+                Class.name(target, targetName);
+            }
+        ''',
+
+        # get all literal string property values of an artifact
+        'propertyValue': '''
+            (artifact: Class, artifactName: String, property : Property, propertyName: String, value: String) {
+                Class.name(artifact, artifactName);             
+                Class.ownedAttribute(artifact, property);
+                Property.name(property, propertyName);
+                Property.defaultValue(property, propValue);    
+                LiteralString.value(propValue, value);
+            }
+        '''
     }
 }

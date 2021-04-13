@@ -182,7 +182,7 @@ class IncQueryProject:
             'queryLanguage': 'viatra',
             'queryName': si_query,
             'queryDefinitions': _dict_to_query_defs(h_patterns),
-            'parameterBinding': _dict_to_bindings(h_bindings) if len(h_bindings) != 0 else None
+            'parameterBinding': _dict_to_bindings(h_bindings) if len(h_bindings) != 0 else []
         })
 
         # return results as list of dicts
