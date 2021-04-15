@@ -24,5 +24,16 @@ patterns = {
                 LiteralString.value(expr, value);
             }
         ''',
+
+        # returns all artifact relationships
+        'predicateTarget': '''
+            (element : Class, target : Class, predicate : Property, predicateName : String, elementName : String, targetName : String) {
+                Class.name(element, elementName);
+                Class.ownedAttribute(element, predicate);
+                Property.name(predicate, predicateName);
+                Property.type(predicate, target);              
+                Class.name(target, targetName);
+            }
+        '''
     }
 }
