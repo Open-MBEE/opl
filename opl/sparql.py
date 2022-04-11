@@ -105,7 +105,9 @@ class Sparql:
 
     def _set_query(self, s_query):
         self._y_store.setQuery(S_PREFIXES_SPARQL+'\n'+s_query)
+        self._y_store.clearParameter('infer')
         self._y_store.addParameter('infer', 'false')
+        self._y_store.clearParameter('sameAs')
         self._y_store.addParameter('sameAs', 'false')
 
     def _submit(self):
